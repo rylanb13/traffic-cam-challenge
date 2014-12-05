@@ -9,6 +9,7 @@ $(document).ready(function() {
         lat: 47.6,
         lng: -122.3
     };
+
     var map = new google.maps.Map(mapElem, {
         center: center,
         zoom: 12
@@ -16,20 +17,20 @@ $(document).ready(function() {
 
     var infoWindow = new google.maps.InfoWindow();
 
-    $.getJSON('https://data.cityofchicago.org/resource/alternative-fuel-locations.json')
+    $.getJSON('http://data.seattle.gov/resource/65fc-btcc.json')
         .done(function(data) {
-            data.forEach(function(station) {
+            data.forEach(function(cam) {
                 var marker = new google.maps.Marker({
                     position: {
-                        lat: Number(station.location.latitude),
-                        lng: Number(station.location.longitude)
+                        lat: Number(cam.location.latitude),
+                        lng: Number(cam.location.longitude)
                     },
                     map: map
                 });
 
                 google.maps.event.addListener(marker, 'click', function() {
-                    var html = '<h2>' + station.station_name + '</h2>';
-                    html += '<p>' + station.street_address + '<p>';
+                    var html = '<h2>' + cam.cameralabel + '</h2>';
+                    html += '<img src="' + cam.imageurl.url + '"/>';
                     infoWindow.setContent(html);
                     infoWindow.open(map, this);
                 });
@@ -41,4 +42,4 @@ $(document).ready(function() {
         .always(function() {
             $('#ajax-loader').fadeOut();
         });
-};
+});
