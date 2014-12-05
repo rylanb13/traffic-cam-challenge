@@ -18,8 +18,8 @@ $(document).ready(function() {
     var infoWindow = new google.maps.InfoWindow();
 
     $.getJSON('http://data.seattle.gov/resource/65fc-btcc.json')
-        .done(function(data) {
-            data.forEach(function(cam) {
+        .done(function (data) {
+            data.forEach(function (cam) {
                 var marker = new google.maps.Marker({
                     position: {
                         lat: Number(cam.location.latitude),
@@ -28,18 +28,25 @@ $(document).ready(function() {
                     map: map
                 });
 
-                google.maps.event.addListener(marker, 'click', function() {
-                    var html = '<h2>' + cam.cameralabel + '</h2>';
-                    html += '<img src="' + cam.imageurl.url + '"/>';
+                google.maps.event.addListener(marker, 'click', function () {
+                    var html = '<h2>' + cam.cameralabel + '</h2>' +
+                        '<img src="' + cam.imageurl.url + '"/>';
                     infoWindow.setContent(html);
                     infoWindow.open(map, this);
+                    map.panTo(this.getPosition());
                 });
+
+                $("#search").bind("search keyup", function () {
+                    var name = cam.cameralabel.toLowerCase();
+                    if (name.indexOf($('#search').val().toLowerCase()) > -1) {
+                        marker.setMap(map);
+                    } else {
+                        marker.setMap(null);
+                    }
+                })
             });
         })
-        .fail(function(error) {
+        .fail(function (error) {
             console.log(error);
-        })
-        .always(function() {
-            $('#ajax-loader').fadeOut();
         });
 });
